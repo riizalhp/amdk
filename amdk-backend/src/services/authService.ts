@@ -4,8 +4,9 @@ import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import pool from '../config/database';
 import jwt from 'jsonwebtoken';
+import { RowDataPacket } from 'mysql2';
 
-interface User {
+interface User extends RowDataPacket {
   id: string;
   full_name: string;
   email: string;
@@ -22,7 +23,7 @@ interface UserData {
 
 interface AuthCredentials {
   email: string;
-  password?: string;
+  password: string; // Ubah dari optional ke required
 }
 
 export const registerNewUser = async (userData: UserData) => {
@@ -43,6 +44,10 @@ export const registerNewUser = async (userData: UserData) => {
 
 export const loginUser = async (credentials: AuthCredentials) => {
   const { email, password } = credentials;
+
+  if (!password) {
+    throw new Error('Password is required');
+  }
 
   // 1. Cari user berdasarkan email
   const sql = 'SELECT * FROM users WHERE email = ?';

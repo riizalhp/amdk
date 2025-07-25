@@ -1,4 +1,5 @@
 // src/controllers/productController.ts
+import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/authMiddleware';
 import {
   createNewProduct,
@@ -19,7 +20,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const getProducts = async (req: AuthRequest, res: Response) => {
+export const getProducts = async (req: Request, res: Response) => {
   try {
     const allProducts = await getAllProducts();
     res.status(200).json(allProducts);
