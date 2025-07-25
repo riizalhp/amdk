@@ -1,7 +1,7 @@
 // src/controllers/orderController.ts
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/authMiddleware'; // Pastikan import ini ada
-import { createNewOrder, getAllOrders } from '../services/orderService';
+import { createNewOrder, getAllOrders, getOrderById } from '../services/orderService';
 
 export const createOrder = async (req: AuthRequest, res: Response) => {
   try {
@@ -13,10 +13,10 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
     const newOrder = await createNewOrder(req.body, userId);
     res.status(201).json({
       message: 'Order created successfully',
-      data: newOrder
+      data: newOrder,
     });
-  } catch (error: any) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+  } catch (error: unknown) {
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'An unknown error occurred' });
   }
 };
 
@@ -24,7 +24,22 @@ export const getOrders = async (req: AuthRequest, res: Response) => {
   try {
     const allOrders = await getAllOrders();
     res.status(200).json(allOrders);
-  } catch (error: any) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+  } catch (error: unknown) {
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'An unknown error occurred' });
+  }
+};
+
+export const getOrder = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const order = await getOrderById(id);
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.status(200).json(order);
+  } catch (error: unknown) {
+    res.status(500).json({ message: 'Server error', error: error instanceof Error ? error.message : 'An unknown error occurred' });
   }
 };

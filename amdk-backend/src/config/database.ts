@@ -5,7 +5,7 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '', // Password default XAMPP
-  database: 'amdk_db'
+  database: 'amdk_db',
 });
 
 export default pool; // <-- Pastikan baris ini ada

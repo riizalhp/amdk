@@ -1,5 +1,5 @@
 // src/middleware/authMiddleware.ts
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
 interface TokenPayload {
@@ -8,10 +8,14 @@ interface TokenPayload {
 }
 // Menambahkan properti 'user' ke interface Request Express
 export interface AuthRequest extends Request {
-  user?: TokenPayload; 
+  user?: TokenPayload;
 }
 
-export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticateToken: RequestHandler = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -24,7 +28,7 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
       return res.status(403).json({ message: 'Token is not valid' });
     }
     // 3. TypeScript sekarang tahu 'user' cocok dengan TokenPayload
-    req.user = user as TokenPayload; 
+    req.user = user as TokenPayload;
     next();
   });
 };
